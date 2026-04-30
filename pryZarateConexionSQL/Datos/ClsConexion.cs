@@ -24,7 +24,8 @@ namespace pryZarateConexionSQL.Datos
             this.servidor = servidor;
             this.baseDatos = baseDatos;
 
-            string cs = "Server=" + servidor + ";Database=" + baseDatos +
+            string cs = "Server=" + servidor +
+                        ";Database=" + baseDatos +
                         ";Integrated Security=True;TrustServerCertificate=True;";
             try
             {
@@ -43,9 +44,6 @@ namespace pryZarateConexionSQL.Datos
 
         public DataTable ObtenerBasesDeDatos()
         {
-            if (!EstaConectado)
-                return null;
-
             string query = @"SELECT name
                              FROM sys.databases
                              WHERE database_id > 4
@@ -55,9 +53,6 @@ namespace pryZarateConexionSQL.Datos
 
         public DataTable ObtenerTablas()
         {
-            if (!EstaConectado)
-                return null;
-
             string query = @"SELECT TABLE_SCHEMA + '.' + TABLE_NAME AS NombreTabla
                              FROM INFORMATION_SCHEMA.TABLES
                              WHERE TABLE_TYPE = 'BASE TABLE'
@@ -67,9 +62,6 @@ namespace pryZarateConexionSQL.Datos
 
         public DataTable ObtenerDatosDeTabla(string nombreTabla)
         {
-            if (!EstaConectado)
-                return null;
-
             string query = "SELECT * FROM " + nombreTabla;
             return Consultar(query);
         }
@@ -77,6 +69,9 @@ namespace pryZarateConexionSQL.Datos
         private DataTable Consultar(string query)
         {
             DataTable tabla = new DataTable();
+            if (!EstaConectado)
+                return tabla;
+
             try
             {
                 using (SqlCommand cmd = new SqlCommand(query, conn))

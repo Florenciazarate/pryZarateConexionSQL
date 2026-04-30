@@ -62,7 +62,9 @@ namespace pryZarateConexionSQL
             dgvDatos.DataSource = datos;
 
             int filas = datos != null ? datos.Rows.Count : 0;
-            lblTablaActual.Text = tabla + "   ·   " + filas + " registros";
+            lblTablaActual.Text = "Mostrando: " + tabla;
+            lblBadge.Text = filas + (filas == 1 ? " registro" : " registros");
+            pnlBadge.Visible = true;
         }
 
         private void CargarBasesDeDatos()
@@ -79,6 +81,12 @@ namespace pryZarateConexionSQL
             }
             cmbBaseDatos.Enabled = cmbBaseDatos.Items.Count > 0;
             cargandoCombos = false;
+
+            if (cmbBaseDatos.Items.Count == 0)
+            {
+                MessageBox.Show("Conectaste al servidor pero no hay bases de datos de usuario.",
+                    "Sin BDs", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void CargarTablas()
@@ -87,6 +95,7 @@ namespace pryZarateConexionSQL
             cargandoCombos = true;
             cmbTablas.Items.Clear();
             dgvDatos.DataSource = null;
+            pnlBadge.Visible = false;
             if (tablas != null)
             {
                 foreach (DataRow fila in tablas.Rows)
@@ -100,18 +109,21 @@ namespace pryZarateConexionSQL
         private void MarcarConectado()
         {
             lblEstado.Text = "● Conectado a " + conexion.BaseDatos;
-            lblEstado.ForeColor = Color.FromArgb(76, 175, 80);
+            lblEstado.ForeColor = Color.FromArgb(120, 230, 150);
+            pnlEstado.FillColor = Color.FromArgb(20, 50, 35);
         }
 
         private void MarcarDesconectado()
         {
             lblEstado.Text = "● Desconectado";
-            lblEstado.ForeColor = Color.FromArgb(231, 76, 60);
+            lblEstado.ForeColor = Color.FromArgb(255, 120, 120);
+            pnlEstado.FillColor = Color.FromArgb(45, 20, 28);
             cmbBaseDatos.Enabled = false;
             cmbTablas.Enabled = false;
             cmbBaseDatos.Items.Clear();
             cmbTablas.Items.Clear();
             dgvDatos.DataSource = null;
+            pnlBadge.Visible = false;
         }
 
         private void frmPrincipal_FormClosing(object sender, FormClosingEventArgs e)
